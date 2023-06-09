@@ -13,7 +13,7 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(
-    private db: DatabaseService,
+    // private db: DatabaseService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
@@ -23,49 +23,45 @@ export class UserService {
     return this.usersRepository.save(newUser);
   }
 
-  //OLD
-  // create(createUserDto: CreateUserDto) {
-  //   return this.db.createUser(createUserDto);
-  // }
-
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  //OLD
-  // findAll() {
-  //   return this.db.findAllUsers();
-  // }
+  async findOne(id: User['id']): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
 
-  
+  async update(id: User['id'], updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'login', 'password', 'createdAt', 'updatedAt'],
+    });
+    console.log(`user.service.ts - line: 55 ->> user`, user);
+    if (!user) throw new NotFoundException('User not found');
 
-  //OLD
-  // findOne(id: string) {
-  //   const userById = this.db.findOneUser(id);
-  //   if (userById) return userById;
-  //   throw new NotFoundException('User not found');
-  // }
+    console.log(
+      `user.service.ts - line: 57 ->> user.password, updateUserDto.oldPassword`,
+      user.password,
+      updateUserDto.oldPassword,
+    );
 
-  // update(id: string, updateUserDto: UpdateUserDto) {
-  //   const userById = this.db.findOneUser(id);
-  //   if (!userById) throw new NotFoundException('User not found');
+    if (user.password !== updateUserDto.oldPassword)
+      throw new ForbiddenException('Invalid old password');
 
-  //   if (userById.password !== updateUserDto.oldPassword)
-  //     throw new ForbiddenException('Invalid old password');
+    user.password = updateUserDto.newPassword;
 
-  //   const updatedUser = this.db.updateUser(id, {
-  //     password: updateUserDto.newPassword,
-  //   });
+    await this.usersRepository.save(user);
 
-  //   return updatedUser;
-  // }
+    delete user.password;
 
-  // remove(id: string) {
-  //   const deletedUser = this.db.deleteUser(id);
-  //   if (!deletedUser) {
-  //     throw new NotFoundException('User not found');
-  //   } else {
-  //     return deletedUser;
-  //   }
-  // }
+    return user;
+  }
+
+  async remove(id: User['id']) {
+    const result = await this.usersRepository.delete(id);
+
+    if (result.affected === 0) throw new NotFoundException('User not found');
+  }
 }

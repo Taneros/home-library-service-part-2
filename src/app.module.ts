@@ -13,7 +13,7 @@ import { User } from './user/entities/user.entity';
 
 @Module({
   imports: [
-    DatabaseModule,
+    // DatabaseModule,
     UserModule,
     ArtistModule,
     AlbumModule,
