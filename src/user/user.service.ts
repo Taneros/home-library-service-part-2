@@ -13,7 +13,6 @@ import { User } from './entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(
-    // private db: DatabaseService,
     @InjectRepository(User)
     private usersRepository: Repository<User>,
   ) {}
@@ -23,7 +22,7 @@ export class UserService {
     return this.usersRepository.save(newUser);
   }
 
-  findAll(): Promise<User[]> {
+  async findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
@@ -38,14 +37,7 @@ export class UserService {
       where: { id },
       select: ['id', 'login', 'password', 'createdAt', 'updatedAt'],
     });
-    console.log(`user.service.ts - line: 55 ->> user`, user);
     if (!user) throw new NotFoundException('User not found');
-
-    console.log(
-      `user.service.ts - line: 57 ->> user.password, updateUserDto.oldPassword`,
-      user.password,
-      updateUserDto.oldPassword,
-    );
 
     if (user.password !== updateUserDto.oldPassword)
       throw new ForbiddenException('Invalid old password');

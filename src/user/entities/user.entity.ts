@@ -1,14 +1,11 @@
-import { classToPlain, Exclude, instanceToPlain } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  VersionColumn,
-  BeforeUpdate,
   BeforeInsert,
-  BeforeRemove,
+  BeforeUpdate,
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  VersionColumn,
 } from 'typeorm';
 
 @Entity()
