@@ -17,10 +17,10 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 
 @Controller('artist')
+@UseInterceptors(ClassSerializerInterceptor)
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Post()
   create(@Body() createArtistDto: CreateArtistDto) {
     return this.artistService.create(createArtistDto);

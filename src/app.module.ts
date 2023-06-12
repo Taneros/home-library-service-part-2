@@ -27,7 +27,7 @@ import { Artist } from './artist/entities/artist.entity';
       username: 'postgres',
       password: 'postgres',
       database: 'postgres',
-      entities: [User, Artist],
+      entities: [User, Artist, Album],
       synchronize: true,
       autoLoadEntities: true,
     }),
