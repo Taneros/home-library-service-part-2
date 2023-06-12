@@ -3,34 +3,46 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Album } from 'src/album/entities/album.entity';
+import { Artist } from 'src/artist/entities/artist.entity';
 import { DatabaseService } from 'src/database/database.service';
+import { Track } from 'src/track/entities/track.entity';
+import { Repository } from 'typeorm';
+import { Fav } from './entities/fav.entity';
 
 @Injectable()
 export class FavsService {
-  // constructor(private db: DatabaseService) {}
-  // createArtist(id: string) {
-  //   const artistById = this.db.findOneArtist(id);
-  //   if (!artistById) throw new UnprocessableEntityException('Artist not found');
-  //   return this.db.createFavoriteArtist(id);
-  // }
-  // createAlbum(id: string) {
-  //   const albumById = this.db.findOneAlbum(id);
-  //   if (!albumById) throw new UnprocessableEntityException('Album not found');
-  //   return this.db.createFavoriteAlbum(id);
-  // }
-  // createTrack(id: string) {
-  //   const trackById = this.db.findOneTrack(id);
-  //   if (!trackById) throw new UnprocessableEntityException('Track not found');
-  //   return this.db.createFavoriteTrack(id);
-  // }
-  // findAll() {
-  //   return this.db.findAllFavorite();
-  // }
+  constructor(
+    @InjectRepository(Fav)
+    private favsRepository: Repository<Fav>,
+  ) {}
+
+  async createFavArtist(id: Artist['id']) {
+    const newFavArtist = this.favsRepository.create({ artists: id });
+    return await this.favsRepository.save(newFavArtist);
+  }
+
+  async createFavAlbum(id: Album['id']) {
+    const newFavAlbum = this.favsRepository.create({ albums: id });
+    return await this.favsRepository.save(newFavAlbum);
+  }
+
+  async createFavTrack(id: Track['id']) {
+    const newFavAlbum = this.favsRepository.create({ tracks: id });
+    return await this.favsRepository.save(newFavAlbum);
+  }
+
+  async findAll() {
+    return this.favsRepository.find();
+  }
+
   // removeArtist(id: string) {
   //   const artistById = this.db.findOneFavorite(id, 'artists');
   //   if (!artistById) throw new NotFoundException('Artist is not favorite');
   //   return this.db.deleteFavoriteArtist(id);
   // }
+
   // removeAlbum(id: string) {
   //   const albumById = this.db.findOneFavorite(id, 'albums');
   //   if (!albumById) throw new NotFoundException('Album is not favorite');

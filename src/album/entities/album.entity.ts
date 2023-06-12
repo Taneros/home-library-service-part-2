@@ -1,4 +1,5 @@
 import { Artist } from 'src/artist/entities/artist.entity';
+import { Fav } from 'src/favs/entities/fav.entity';
 import { Track } from 'src/track/entities/track.entity';
 import {
   Column,
@@ -28,4 +29,7 @@ export class Album {
 
   @OneToMany(() => Track, (track) => track.album)
   tracks: Track[];
+
+  // @OneToMany(() => Fav, (fav) => fav.favAlbums)
+  // favs: Fav[];
 }

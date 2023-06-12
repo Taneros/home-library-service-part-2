@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/album/entities/album.entity';
-import { DatabaseService } from 'src/database/database.service';
+import { Fav } from 'src/favs/entities/fav.entity';
 import { Track } from 'src/track/entities/track.entity';
 import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -17,6 +17,8 @@ export class ArtistService {
     private albumsRepository: Repository<Album>,
     @InjectRepository(Track)
     private tracksRepository: Repository<Track>,
+    @InjectRepository(Fav)
+    private favsRepository: Repository<Fav>,
   ) {}
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
@@ -51,9 +53,11 @@ export class ArtistService {
   async remove(id: Artist['id']): Promise<void> {
     const artist = await this.artistsRepository.findOne({
       where: { id },
-      relations: ['albums', 'tracks'],
+      relations: ['albums', 'tracks', 'favs'],
     });
     if (!artist) throw new NotFoundException('Artist not found');
+
+    console.log(`artist.service.ts - line: 60 ->> artist`, artist);
 
     for await (const album of artist.albums) {
       album.artistId = null;
@@ -64,6 +68,11 @@ export class ArtistService {
       track.artistId = null;
       this.tracksRepository.save(track);
     }
+
+    // for await (const track of artist.tracks) {
+    //   track.artistId = null;
+    //   this.tracksRepository.save(track);
+    // }
 
     await this.artistsRepository.delete(id);
   }
