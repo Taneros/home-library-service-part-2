@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Album } from 'src/album/entities/album.entity';
 import { DatabaseService } from 'src/database/database.service';
+import { Track } from 'src/track/entities/track.entity';
 import { Repository } from 'typeorm';
 import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
@@ -14,15 +15,17 @@ export class ArtistService {
     private artistsRepository: Repository<Artist>,
     @InjectRepository(Album)
     private albumsRepository: Repository<Album>,
+    @InjectRepository(Track)
+    private tracksRepository: Repository<Track>,
   ) {}
 
   async create(createArtistDto: CreateArtistDto): Promise<Artist> {
     const newArtist = this.artistsRepository.create(createArtistDto);
-    return this.artistsRepository.save(newArtist);
+    return await this.artistsRepository.save(newArtist);
   }
 
   async findAll(): Promise<Artist[]> {
-    return this.artistsRepository.find();
+    return await this.artistsRepository.find();
   }
 
   async findOne(id: Artist['id']): Promise<Artist> {
@@ -48,21 +51,20 @@ export class ArtistService {
   async remove(id: Artist['id']): Promise<void> {
     const artist = await this.artistsRepository.findOne({
       where: { id },
-      relations: ['albums'],
+      relations: ['albums', 'tracks'],
     });
     if (!artist) throw new NotFoundException('Artist not found');
 
-    console.log(`artist.service.ts - line: 52 ->> artist`, artist);
-
-    for (const album of artist.albums) {
+    for await (const album of artist.albums) {
       album.artistId = null;
-      await this.albumsRepository.save(album);
+      this.albumsRepository.save(album);
     }
 
-    const resultDelete = await this.artistsRepository.delete(id);
-    if (resultDelete.affected === 0)
-      throw new NotFoundException('Artist not found');
+    for await (const track of artist.tracks) {
+      track.artistId = null;
+      this.tracksRepository.save(track);
+    }
 
-    // await this.albumsRepository.update({ artistId: id }, { artistId: null });
+    await this.artistsRepository.delete(id);
   }
 }
