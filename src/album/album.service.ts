@@ -43,14 +43,17 @@ export class AlbumService {
   async remove(id: string): Promise<void> {
     const album = await this.albumsRepository.findOne({
       where: { id },
-      relations: ['tracks'],
+      relations: ['tracks', 'favs'],
     });
     if (!album) throw new NotFoundException('Album not found');
 
-    for await (const track of album.tracks) {
-      track.artistId = null;
-      this.tracksRepository.save(track);
-    }
+    const albumUpdates = album.tracks.map((album) => {
+      album.albumId = null;
+      return this.tracksRepository.save(album);
+    });
+
+    await Promise.all(albumUpdates);
+
     await this.albumsRepository.delete(id);
   }
 }
