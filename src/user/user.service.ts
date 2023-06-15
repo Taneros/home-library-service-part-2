@@ -4,7 +4,6 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DatabaseService } from 'src/database/database.service';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,11 +18,16 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.usersRepository.create(createUserDto);
-    return this.usersRepository.save(newUser);
+    console.log(
+      `user.service.ts - line: 21 ->> newUser, createUserDto`,
+      newUser,
+      createUserDto,
+    );
+    return await this.usersRepository.save(newUser);
   }
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return await this.usersRepository.find();
   }
 
   async findOne(id: User['id']): Promise<User> {
@@ -47,6 +51,8 @@ export class UserService {
     await this.usersRepository.save(user);
 
     delete user.password;
+
+    console.log(`user.service.ts - line: 55 ->> user`, user);
 
     return user;
   }

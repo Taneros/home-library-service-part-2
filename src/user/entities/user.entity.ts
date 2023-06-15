@@ -42,7 +42,13 @@ export class User {
 
   @BeforeUpdate()
   public setUpdatedAt() {
-    this.updatedAt = Math.floor(Date.now() / 1000 + 1);
+    console.log(
+      `user.entity.ts - line: 45 ->> this.version `,
+      this.createdAt === this.updatedAt,
+    );
+    if (this.createdAt === this.updatedAt)
+      this.updatedAt = Math.floor(Date.now() / 1000 + 1);
+    else this.updatedAt = Math.floor(Date.now() / 1000);
   }
 
   @BeforeInsert()
