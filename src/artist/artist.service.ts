@@ -60,20 +60,38 @@ export class ArtistService {
     console.log(`artist.service.ts - line: 60 ->> artist`, artist);
 
     for await (const album of artist.albums) {
+      console.log(
+        `artist.service.ts - line: 63 ->> artist.albums`,
+        artist.albums,
+      );
       album.artistId = null;
-      this.albumsRepository.save(album);
+      console.log(`artist.service.ts - line: 68 ->> album no ARTIST`, album);
+      await this.albumsRepository.save(album);
     }
 
     for await (const track of artist.tracks) {
       track.artistId = null;
-      this.tracksRepository.save(track);
+      await this.tracksRepository.save(track);
     }
 
-    // for await (const track of artist.tracks) {
-    //   track.artistId = null;
-    //   this.tracksRepository.save(track);
-    // }
+    for await (const track of artist.tracks) {
+      track.artistId = null;
+      await this.tracksRepository.save(track);
+    }
 
     await this.artistsRepository.delete(id);
+
+    //TODO
+    /**
+     * optimize
+     * 
+     * const trackUpdates = artist.tracks.map((track) => {
+  track.artistId = null;
+  return this.tracksRepository.save(track);
+});
+
+await Promise.all(trackUpdates);
+     *
+     **/
   }
 }
