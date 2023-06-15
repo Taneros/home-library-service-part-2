@@ -26,6 +26,6 @@ export class Artist {
   @OneToMany(() => Track, (track) => track.artist)
   tracks: Track[];
 
-  @ManyToMany(() => Fav, (fav) => fav.favArtists)
+  @ManyToMany(() => Fav, (fav) => fav.artists)
   favs: Fav[];
 }

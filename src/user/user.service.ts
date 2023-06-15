@@ -52,8 +52,6 @@ export class UserService {
 
     delete user.password;
 
-    console.log(`user.service.ts - line: 55 ->> user`, user);
-
     return user;
   }
 

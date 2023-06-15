@@ -57,15 +57,8 @@ export class ArtistService {
     });
     if (!artist) throw new NotFoundException('Artist not found');
 
-    console.log(`artist.service.ts - line: 60 ->> artist`, artist);
-
     for await (const album of artist.albums) {
-      console.log(
-        `artist.service.ts - line: 63 ->> artist.albums`,
-        artist.albums,
-      );
       album.artistId = null;
-      console.log(`artist.service.ts - line: 68 ->> album no ARTIST`, album);
       await this.albumsRepository.save(album);
     }
 

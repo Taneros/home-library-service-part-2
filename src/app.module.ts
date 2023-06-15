@@ -24,7 +24,7 @@ import { Fav } from './favs/entities/fav.entity';
     FavsModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'db',
+      host: 'localhost',
       port: 5432,
       username: 'postgres',
       password: 'postgres',

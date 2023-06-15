@@ -38,6 +38,6 @@ export class Track {
   @ManyToOne(() => Album, (album) => album.tracks)
   album: Album;
 
-  //   @OneToMany(() => Fav, (fav) => fav.favTracks)
-  //   favs: Fav[];
+  @ManyToMany(() => Fav, (fav) => fav.tracks)
+  favs: Fav[];
 }
