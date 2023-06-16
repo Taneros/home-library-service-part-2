@@ -23,10 +23,10 @@
     "nestG": "nest g",
     "nest": "nest",
     "docker:dev": "docker-compose up --build"
-
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",
+    "@nestjs/config": "^3.0.0",
     "@nestjs/core": "^8.0.0",
     "@nestjs/jwt": "^9.0.0",
     "@nestjs/mapped-types": "^1.0.1",

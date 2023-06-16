@@ -27,7 +27,7 @@ export class FavsService {
 
   private async _getFavs() {
     const allFavs = await this.favsRepository.find();
-    console.log(`favs.service.ts - line: 25 ->> allFavs`, allFavs);
+    console.log(`favs.service.ts - line: 25 ->> allFavs`, allFavs[0]);
     const allFavsNoId = allFavs.filter((el) => (el.id ? false : el));
     if (allFavsNoId.length > 0) return allFavsNoId[0];
     const newFavs = this.favsRepository.create({
@@ -76,10 +76,6 @@ export class FavsService {
   }
 
   async findAll() {
-    console.log(
-      `favs.service.ts - line: 77 ->> findAll`,
-      await this._getFavs(),
-    );
     return await this._getFavs();
   }
 
