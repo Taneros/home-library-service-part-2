@@ -37,19 +37,19 @@ export class FavsController {
     return this.favsService.findAll();
   }
 
-  // @Delete('artist/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeArtist(@Param('id', ParseUUIDPipe) id: string) {
-  //   return this.favsService.removeArtist(id);
-  // }
-  // @Delete('album/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
-  //   return this.favsService.removeAlbum(id);
-  // }
-  // @Delete('track/:id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeTrack(@Param('id', ParseUUIDPipe) id: string) {
-  //   return this.favsService.removeTrack(id);
-  // }
+  @Delete('artist/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeArtist(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favsService.removeArtist(id);
+  }
+  @Delete('album/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeAlbum(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favsService.removeAlbum(id);
+  }
+  @Delete('track/:id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  removeTrack(@Param('id', ParseUUIDPipe) id: string) {
+    return this.favsService.removeTrack(id);
+  }
 }
