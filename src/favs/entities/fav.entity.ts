@@ -14,15 +14,15 @@ export class Fav {
   @Exclude()
   id: string;
 
-  @ManyToMany(() => Artist, (artist) => artist.favs, { nullable: true })
+  @ManyToMany(() => Artist, { nullable: true })
   @JoinTable()
   artists: Artist[];
 
-  @ManyToMany(() => Album, (album) => album.favs, { nullable: true })
+  @ManyToMany(() => Album, { nullable: true })
   @JoinTable()
   albums: Album[];
 
-  @ManyToMany(() => Track, (track) => track.favs, { nullable: true })
+  @ManyToMany(() => Track, { nullable: true })
   @JoinTable()
   tracks: Track[];
 }

@@ -26,10 +26,11 @@ export class FavsService {
   ) {}
 
   private async _getFavs() {
-    const allFavs = await this.favsRepository.find();
-    console.log(`favs.service.ts - line: 25 ->> allFavs`, allFavs[0]);
-    const allFavsNoId = allFavs.filter((el) => (el.id ? false : el));
-    if (allFavsNoId.length > 0) return allFavsNoId[0];
+    const allFavs = await this.favsRepository.find({
+      relations: ['artists', 'albums', 'tracks'],
+    });
+
+    if (allFavs.length > 0) return allFavs[0];
     const newFavs = this.favsRepository.create({
       artists: [],
       albums: [],
@@ -42,7 +43,7 @@ export class FavsService {
   async createFavArtist(id: Artist['id']) {
     const allFavs = await this._getFavs();
     const artist = await this.artistsRepository.findOne({ where: { id } });
-    if (!artist) throw new NotFoundException('Artist not found');
+    if (!artist) throw new UnprocessableEntityException('Artist not found');
 
     allFavs.artists = [...allFavs.artists, artist];
 
@@ -54,7 +55,7 @@ export class FavsService {
   async createFavAlbum(id: Album['id']) {
     const allFavs = await this._getFavs();
     const album = await this.albumsRepository.findOne({ where: { id } });
-    if (!album) throw new NotFoundException('Album not found');
+    if (!album) throw new UnprocessableEntityException('Album not found');
 
     allFavs.albums = [...allFavs.albums, album];
 
@@ -66,7 +67,7 @@ export class FavsService {
   async createFavTrack(id: Track['id']) {
     const allFavs = await this._getFavs();
     const track = await this.tracksRepository.findOne({ where: { id } });
-    if (!track) throw new NotFoundException('Track not found');
+    if (!track) throw new UnprocessableEntityException('Track not found');
 
     allFavs.tracks = [...allFavs.tracks, track];
 

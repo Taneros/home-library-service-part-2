@@ -53,7 +53,7 @@ export class ArtistService {
   async remove(id: Artist['id']): Promise<void> {
     const artist = await this.artistsRepository.findOne({
       where: { id },
-      relations: ['albums', 'tracks', 'favs'],
+      relations: ['albums', 'tracks'],
     });
     if (!artist) throw new NotFoundException('Artist not found');
 
