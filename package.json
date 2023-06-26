@@ -22,7 +22,8 @@
     "nestRes": "nest g res",
     "nestG": "nest g",
     "nest": "nest",
-    "docker:dev": "docker-compose up --build"
+    "docker:dev": "docker-compose up --build",
+    "start:lib": "docker-compose up -d && docker-compose logs -f"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

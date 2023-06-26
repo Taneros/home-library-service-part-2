@@ -18,11 +18,6 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const newUser = this.usersRepository.create(createUserDto);
-    console.log(
-      `user.service.ts - line: 21 ->> newUser, createUserDto`,
-      newUser,
-      createUserDto,
-    );
     return await this.usersRepository.save(newUser);
   }
 

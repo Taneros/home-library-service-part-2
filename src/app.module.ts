@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AlbumModule } from './album/album.module';
 import { Album } from './album/entities/album.entity';
 import { AppController } from './app.controller';
@@ -22,17 +22,22 @@ import { UserModule } from './user/user.module';
     AlbumModule,
     TrackModule,
     FavsModule,
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'postgres',
-      database: 'postgres',
-      entities: [User, Artist, Album, Track, Fav],
-      synchronize: true,
-      autoLoadEntities: true,
+    // ConfigModule.forRoot({ isGlobal: true, envFilePath: '../.env' }),
+    ConfigModule.forRoot(),
+    TypeOrmModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres',
+        host: configService.get<string>('DATABASE_HOST'),
+        port: parseInt(configService.get<string>('DATABASE_PORT')),
+        username: configService.get<string>('DATABASE_USER'),
+        password: configService.get<string>('DATABASE_PASS'),
+        database: configService.get<string>('DATABASE_NAME'),
+        entities: [User, Artist, Album, Track, Fav],
+        synchronize: true,
+        autoLoadEntities: true,
+      }),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AppController],
