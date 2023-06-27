@@ -36,6 +36,7 @@ export class UserService {
       where: { id },
       select: ['id', 'login', 'password', 'createdAt', 'updatedAt'],
     });
+
     if (!user) throw new NotFoundException('User not found');
 
     if (user.password !== updateUserDto.oldPassword)

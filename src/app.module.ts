@@ -13,6 +13,7 @@ import { Track } from './track/entities/track.entity';
 import { TrackModule } from './track/track.module';
 import { User } from './user/entities/user.entity';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UserModule } from './user/user.module';
       }),
       inject: [ConfigService],
     }),
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
