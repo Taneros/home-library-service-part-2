@@ -17,7 +17,7 @@ services:
     networks:
       - app-network
 
-  app:
+  app: 
     build:
       context: .
       dockerfile: Dockerfile

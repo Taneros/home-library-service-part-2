@@ -10,19 +10,19 @@ import { Tokens } from './types';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('/signup')
+  signup(@Body() dto: AuthDto): Promise<Tokens> {
+    return this.authService.signup(dto);
+  }
+
   @Post('/login')
-  login() {
-    this.authService.login();
+  login(@Body() dto: AuthDto): Promise<Tokens> {
+    return this.authService.login(dto);
   }
 
   @Post('/logout')
   logout() {
     this.authService.logout();
-  }
-
-  @Post('/signup')
-  signup(@Body() dto: AuthDto): Promise<Tokens> {
-    return this.authService.signup(dto);
   }
 
   @Post('/refresh')

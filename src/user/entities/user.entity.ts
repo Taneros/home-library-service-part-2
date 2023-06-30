@@ -40,6 +40,9 @@ export class User {
   })
   updatedAt: number;
 
+  @Column({ nullable: true })
+  hashedRt: string;
+
   @BeforeUpdate()
   public setUpdatedAt() {
     if (this.createdAt === this.updatedAt)

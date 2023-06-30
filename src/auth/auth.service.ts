@@ -1,4 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+
 import { AuthDto } from './dto';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -14,6 +19,61 @@ export class AuthService {
     private usersRepository: Repository<User>,
     private jwtService: JwtService,
   ) {}
+
+  async signup(user: AuthDto): Promise<Tokens> {
+    const hash = await this.hashData(user.password);
+    const newUser = this.usersRepository.create({
+      login: user.email,
+      password: hash,
+    });
+
+    const tokens = await this.getTokens(newUser.id, newUser.login);
+
+    newUser.hashedRt = await this.hashData(tokens.refresh_token);
+
+    await this.usersRepository.save(newUser);
+
+    return tokens;
+  }
+
+  async login(user: AuthDto): Promise<Tokens> {
+    const findUser = await this.usersRepository.findOne({
+      where: { login: user.email },
+      select: ['id', 'login', 'password', 'createdAt', 'updatedAt', 'hashedRt'],
+    });
+    if (!findUser) throw new NotFoundException('User not found');
+
+    console.log(
+      `auth.service.ts - line: 45 ->>  user.password,
+      findUser.password,`,
+      user.password,
+      findUser.password,
+    );
+
+    const matchPassword = await bcrypt.compare(
+      user.password,
+      findUser.password,
+    );
+
+    if (!matchPassword)
+      throw new UnauthorizedException('Invalid username or password');
+
+    const tokens = await this.getTokens(findUser.id, findUser.login);
+
+    // findUser.hashedRt = await this.hashData(tokens.refresh_token);
+
+    await this.usersRepository.save(findUser);
+
+    return tokens;
+  }
+
+  logout() {
+    return '';
+  }
+
+  refresh() {
+    return '';
+  }
 
   hashData(data: string) {
     return bcrypt.hash(data, 10);
@@ -49,38 +109,17 @@ export class AuthService {
     };
   }
 
-  async updateHash(userId: User['id'], rt: string) {
+  async updateRtHash(userId: User['id'], rt: string) {
     const hash = await this.hashData(rt);
 
     const user = await this.usersRepository.findOne({
       where: { id: userId },
       select: ['id', 'login', 'password', 'createdAt', 'updatedAt'],
     });
-  }
+    if (!user) throw new NotFoundException('User not found');
 
-  login() {
-    return '';
-  }
+    user.hashedRt = hash;
 
-  logout() {
-    return '';
-  }
-
-  async signup(user: AuthDto): Promise<Tokens> {
-    const hash = await this.hashData(user.password);
-    const newUser = this.usersRepository.create({
-      login: user.email,
-      password: hash,
-    });
-
-    const savedUser = await this.usersRepository.save(newUser);
-
-    const tokens = await this.getTokens(savedUser.id, newUser.login);
-
-    return tokens;
-  }
-
-  refresh() {
-    return '';
+    await this.usersRepository.save(user);
   }
 }
