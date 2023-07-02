@@ -47,11 +47,18 @@ export class AuthController {
     return this.authService.logout(user.sub);
   }
 
+  // @UseGuards(AuthGuard('jwt-refresh'))
+  // @Post('/refresh')
+  // @HttpCode(HttpStatus.OK)
+  // refresh(@Req() req: Request) {
+  //   const user = req.user;
+  //   this.authService.refresh(user.sub, user.refreshToken);
+  // }
+
   @UseGuards(AuthGuard('jwt-refresh'))
   @Post('/refresh')
   @HttpCode(HttpStatus.OK)
-  refresh(@Req() req: Request) {
-    const user = req.user;
-    this.authService.refresh(user.sub);
+  refresh(@UserId() user: any) {
+    this.authService.refresh(user.sub, user.refreshToken);
   }
 }
