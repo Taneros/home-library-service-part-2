@@ -28,7 +28,7 @@ export class AuthService {
     });
 
     const tokens = await this.getTokens(newUser.id, newUser.login);
-
+    // why make hash of rt token?
     newUser.hashedRt = await this.hashData(tokens.refresh_token);
 
     await this.usersRepository.save(newUser);
@@ -43,13 +43,6 @@ export class AuthService {
     });
     if (!findUser) throw new NotFoundException('User not found');
 
-    console.log(
-      `auth.service.ts - line: 45 ->>  user.password,
-      findUser.password,`,
-      user.password,
-      findUser.password,
-    );
-
     const matchPassword = await bcrypt.compare(
       user.password,
       findUser.password,
@@ -60,7 +53,7 @@ export class AuthService {
 
     const tokens = await this.getTokens(findUser.id, findUser.login);
 
-    // findUser.hashedRt = await this.hashData(tokens.refresh_token);
+    findUser.hashedRt = await this.hashData(tokens.refresh_token);
 
     await this.usersRepository.save(findUser);
 
@@ -83,7 +76,7 @@ export class AuthService {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {
-          sub: userId,
+          sub: userId, // TODO remove sub use id
           email,
         },
         {
