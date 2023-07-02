@@ -3,6 +3,11 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { AuthService } from '../auth.service';
 
+type JwtPayload = {
+  sub: string;
+  email: string;
+};
+
 @Injectable()
 export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
   constructor() {
@@ -12,8 +17,7 @@ export class AtStrategy extends PassportStrategy(Strategy, 'jwt') {
       secretOrKey: 'at-secret',
     });
   }
-  validate(payload: any) {
+  validate(payload: JwtPayload): JwtPayload {
     return payload;
   }
 }
-AuthService;

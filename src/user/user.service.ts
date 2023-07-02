@@ -34,7 +34,7 @@ export class UserService {
   async update(id: User['id'], updateUserDto: UpdateUserDto): Promise<User> {
     const user = await this.usersRepository.findOne({
       where: { id },
-      select: ['id', 'login', 'password', 'createdAt', 'updatedAt'],
+      select: ['id', 'login', 'password', 'createdAt', 'updatedAt', 'hashedRt'],
     });
 
     if (!user) throw new NotFoundException('User not found');

@@ -60,11 +60,21 @@ export class AuthService {
     return tokens;
   }
 
-  logout() {
+  async logout(id: User['id']) {
+    const findUser = await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'login', 'password', 'createdAt', 'updatedAt', 'hashedRt'],
+    });
+    if (!findUser) throw new NotFoundException('User not found');
+
+    findUser.hashedRt = null;
+
+    await this.usersRepository.save(findUser);
+
     return '';
   }
 
-  refresh() {
+  refresh(id: User['id'], rt: string) {
     return '';
   }
 
