@@ -21,6 +21,7 @@ export class AuthService {
   ) {}
 
   async signup(user: AuthDto): Promise<Tokens> {
+    console.log(`auth.service.ts - line: 24 ->> signup`);
     const hash = await this.hashData(user.password);
     const newUser = this.usersRepository.create({
       login: user.email,
@@ -74,8 +75,25 @@ export class AuthService {
     return '';
   }
 
-  refresh(id: User['id'], rt: string) {
-    return '';
+  async refresh(id: User['id'], rt: string) {
+    const findUser = await this.usersRepository.findOne({
+      where: { id },
+      select: ['id', 'login', 'password', 'createdAt', 'updatedAt', 'hashedRt'],
+    });
+    if (!findUser) throw new NotFoundException('User not found');
+
+    if (!findUser.hashedRt) throw new UnauthorizedException('Not authorized');
+
+    const isRtMatch = await bcrypt.compare(rt, findUser.hashedRt);
+    if (!isRtMatch) throw new UnauthorizedException('Not authorized');
+
+    const tokens = await this.getTokens(findUser.id, findUser.login);
+    // why make hash of rt token?
+    findUser.hashedRt = await this.hashData(tokens.refresh_token);
+
+    await this.usersRepository.save(findUser);
+
+    return tokens;
   }
 
   hashData(data: string) {

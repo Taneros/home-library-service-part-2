@@ -4,29 +4,27 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  Req,
   UseGuards,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { InjectRepository } from '@nestjs/typeorm';
-import { JwtPayload } from 'jsonwebtoken';
-import { User } from 'src/user/entities/user.entity';
-import { Repository } from 'typeorm';
 import { AuthService } from './auth.service';
+import { GetCurrentUser, GetCurrentUserId, Public } from './common/decorators';
+import { RtGuard } from './common/guards';
 import { AuthDto } from './dto';
 import { Tokens } from './types';
-import { UserId } from './common/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
   signup(@Body() dto: AuthDto): Promise<Tokens> {
+    console.log(`auth.controller.ts - line: 27 ->> signup`);
     return this.authService.signup(dto);
   }
 
+  @Public()
   @Post('/login')
   @HttpCode(HttpStatus.OK)
   login(@Body() dto: AuthDto): Promise<Tokens> {
@@ -40,11 +38,13 @@ export class AuthController {
   //   const user = req.user;
   //   this.authService.logout(user.sub);
   // }
-  @UseGuards(AuthGuard('jwt'))
+
+  // @UseGuards(AtGuard)
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
-  logout(@UserId() user: any) {
-    return this.authService.logout(user.sub);
+  // logout(@UserId() user: any) {
+  logout(@GetCurrentUserId() userId: string) {
+    return this.authService.logout(userId);
   }
 
   // @UseGuards(AuthGuard('jwt-refresh'))
@@ -55,10 +55,14 @@ export class AuthController {
   //   this.authService.refresh(user.sub, user.refreshToken);
   // }
 
-  @UseGuards(AuthGuard('jwt-refresh'))
+  @Public()
+  @UseGuards(RtGuard)
   @Post('/refresh')
   @HttpCode(HttpStatus.OK)
-  refresh(@UserId() user: any) {
-    this.authService.refresh(user.sub, user.refreshToken);
+  refresh(
+    @GetCurrentUserId() userId: string,
+    @GetCurrentUser('refreshToken') refreshToken: string,
+  ) {
+    return this.authService.refresh(userId, refreshToken);
   }
 }

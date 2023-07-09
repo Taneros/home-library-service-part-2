@@ -1,11 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { AtGuard } from './auth/common/guards';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.useGlobalPipes(new ValidationPipe());
+  // app.useGlobalGuards(new AtGuard(new Reflector()));
 
   // Swagger setup
   const config = new DocumentBuilder()
