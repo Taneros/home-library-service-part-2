@@ -21,8 +21,13 @@ export class UserService {
     return await this.usersRepository.save(newUser);
   }
 
-  async findAll(): Promise<User[]> {
-    return await this.usersRepository.find();
+  async findAll(): Promise<Omit<User, 'hashedRt'>[]> {
+    const users = await this.usersRepository.find();
+
+    return users.map((user) => {
+      const { hashedRt, ...userWithoutHashedRt } = user;
+      return userWithoutHashedRt;
+    });
   }
 
   async findOne(id: User['id']): Promise<User> {
@@ -47,6 +52,7 @@ export class UserService {
     await this.usersRepository.save(user);
 
     delete user.password;
+    delete user.hashedRt;
 
     return user;
   }

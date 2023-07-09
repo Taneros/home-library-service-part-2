@@ -20,7 +20,6 @@ export class AuthController {
   @Post('/signup')
   @HttpCode(HttpStatus.CREATED)
   signup(@Body() dto: AuthDto): Promise<Tokens> {
-    console.log(`auth.controller.ts - line: 27 ->> signup`);
     return this.authService.signup(dto);
   }
 
@@ -31,29 +30,11 @@ export class AuthController {
     return this.authService.login(dto);
   }
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @Post('/logout')
-  // @HttpCode(HttpStatus.OK)
-  // logout(@Req() req: Request) {
-  //   const user = req.user;
-  //   this.authService.logout(user.sub);
-  // }
-
-  // @UseGuards(AtGuard)
   @Post('/logout')
   @HttpCode(HttpStatus.OK)
-  // logout(@UserId() user: any) {
   logout(@GetCurrentUserId() userId: string) {
     return this.authService.logout(userId);
   }
-
-  // @UseGuards(AuthGuard('jwt-refresh'))
-  // @Post('/refresh')
-  // @HttpCode(HttpStatus.OK)
-  // refresh(@Req() req: Request) {
-  //   const user = req.user;
-  //   this.authService.refresh(user.sub, user.refreshToken);
-  // }
 
   @Public()
   @UseGuards(RtGuard)

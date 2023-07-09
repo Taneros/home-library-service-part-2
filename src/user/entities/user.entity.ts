@@ -44,14 +44,14 @@ export class User {
   hashedRt: string;
 
   @BeforeUpdate()
-  public setUpdatedAt() {
+  private setUpdatedAt() {
     if (this.createdAt === this.updatedAt)
       this.updatedAt = Math.floor(Date.now() / 1000 + 1);
     else this.updatedAt = Math.floor(Date.now() / 1000);
   }
 
   @BeforeInsert()
-  public setCreatedAt() {
+  private setCreatedAt() {
     const timeStamp = Math.floor(Date.now() / 1000);
     this.createdAt = timeStamp;
     this.updatedAt = timeStamp;
