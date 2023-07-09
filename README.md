@@ -1,5 +1,7 @@
 # Home Library Service
 
+download docker desktop
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -20,8 +22,24 @@ npm install
 ## Running application
 
 ```
-npm start
+ npm run docker:dev
+
 ```
+## Available endpoints
+
+http://localhost:4000/auth/signup
+
+body: {"email": "<email>", "password": "" }
+
+http://localhost:4000/auth/login
+body: {"email": "<email>", "password": "" }
+
+http://localhost:4000/auth/refresh
+ Bearer <refresh_token>
+
+http://localhost:4000/auth/logout
+ Bearer <access_token>
+ 
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
